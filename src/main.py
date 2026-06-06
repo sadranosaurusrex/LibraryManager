@@ -1,16 +1,17 @@
 from pathlib import Path
+import tkinter as tk
+
 from repository.library_repository import LibraryRepository
+from ui.main_window import MainWindow
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 excel_path = BASE_DIR / "data" / "Books_v2.xlsx"
 
-print(excel_path)
-
 repo = LibraryRepository(excel_path)
 
-books = repo.get_all_books()
+root = tk.Tk()
 
-print(books.head())
-print()
-print("Total books:", len(books))
+app = MainWindow(root, repo)
+
+root.mainloop()
