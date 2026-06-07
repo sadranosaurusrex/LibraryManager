@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from enum import Enum
 import pandas as pd
+import re
 
 
 # ---------------- ENUMS ----------------
@@ -17,7 +18,6 @@ class StorageEnum(str, Enum):
     SHELF_B = "قفسه B"
     SHELF_C = "قفسه C"
 
-import re
 
 def normalize_text(text: str) -> str:
     if not isinstance(text, str):
