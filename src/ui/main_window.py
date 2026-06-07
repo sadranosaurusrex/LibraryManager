@@ -85,6 +85,12 @@ class MainWindow:
             command=self.open_edit_book_window
         ).pack(side="left", padx=5)
 
+        # enable Ctrl+A selection for text inputs
+        self.root.bind_all("<Control-a>", self.select_all)
+        self.root.bind_all("<Control-A>", self.select_all)
+        self.root.bind_all("<Command-a>", self.select_all)
+        self.root.bind_all("<Command-A>", self.select_all)
+
         # ---------- TABLE ----------
         table_frame = ttk.Frame(self.root)
         table_frame.pack(fill="both", expand=True, padx=10, pady=10)
@@ -119,6 +125,17 @@ class MainWindow:
 
         # 👉 Double click edit
         self.tree.bind("<Double-1>", self.open_edit_book_window)
+
+    def select_all(self, event):
+        widget = event.widget
+        if isinstance(widget, (tk.Entry, ttk.Entry, tk.Spinbox, ttk.Spinbox)):
+            try:
+                widget.selection_range(0, tk.END)
+                widget.icursor(tk.END)
+                return "break"
+            except tk.TclError:
+                return None
+        return None
 
     # ---------------- DATA ----------------
     def load_books(self):
@@ -223,20 +240,26 @@ class MainWindow:
         # Floor
         fields["Floor"] = ttk.Spinbox(win, from_=1, to=10)
         fields["Floor"].pack(fill="x", padx=10)
+        fields["Floor"].insert(0, "1")
 
         # Row
         fields["Row"] = ttk.Spinbox(win, from_=1, to=20)
         fields["Row"].pack(fill="x", padx=10)
+        fields["Row"].insert(0, "1")
 
         # Rating
         fields["Rating"] = ttk.Spinbox(win, from_=0, to=5)
         fields["Rating"].pack(fill="x", padx=10)
+        fields["Rating"].insert(0, "0")
 
         # Notes
         fields["Notes"] = ttk.Entry(win)
         fields["Notes"].pack(fill="x", padx=10)
 
         def save():
+            rating_value = fields["Rating"].get().strip()
+            floor_value = fields["Floor"].get().strip()
+            row_value = fields["Row"].get().strip()
 
             data = {
                 "BookName": fields["BookName"].get(),
@@ -245,9 +268,9 @@ class MainWindow:
                 "Description": fields["Description"].get(),
                 "Storage": storage_var.get(),
                 "Status": status_var.get(),
-                "Floor": int(float(fields["Floor"].get())),
-                "Row": int(float(fields["Row"].get())),
-                "Rating": float(fields["Rating"].get()),
+                "Floor": int(float(floor_value or "1")),
+                "Row": int(float(row_value or "1")),
+                "Rating": float(rating_value or "0"),
                 "DateAdded": "2026-06-06",
                 "DateFinished": "",
                 "CoverPath": "",
@@ -323,6 +346,9 @@ class MainWindow:
         fields["Notes"].insert(0, book["Notes"] if pd.notna(book["Notes"]) else "")
 
         def save():
+            rating_value = fields["Rating"].get().strip()
+            floor_value = fields["Floor"].get().strip()
+            row_value = fields["Row"].get().strip()
 
             updated = {
                 "BookName": fields["BookName"].get(),
@@ -330,9 +356,9 @@ class MainWindow:
                 "Genre": fields["Genre"].get(),
                 "Storage": storage_var.get(),
                 "Status": status_var.get(),
-                "Floor": int(float(fields["Floor"].get())),
-                "Row": int(float(fields["Row"].get())),
-                "Rating": float(fields["Rating"].get()),
+                "Floor": int(float(floor_value or "1")),
+                "Row": int(float(row_value or "1")),
+                "Rating": float(rating_value or "0"),
                 "Notes": fields["Notes"].get()
             }
 
