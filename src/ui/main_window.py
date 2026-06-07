@@ -13,8 +13,7 @@ class StatusEnum(str, Enum):
 
 
 class StorageEnum(str, Enum):
-    CLOSET_MAIN = "کمد اصلی"
-    CLOSET_WALL = "کمد دیواری"
+    CLOSET_MAIN = "قفسه اصلی"
     SHELF_A = "قفسه A"
     SHELF_B = "قفسه B"
 
