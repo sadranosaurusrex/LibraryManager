@@ -64,16 +64,53 @@ class MainWindow:
         self.search_var = tk.StringVar()
         self.search_var.trace_add("write", lambda *_: self.on_search())
 
-        ttk.Entry(
+        self.search_entry = ttk.Entry(
             search_frame,
             textvariable=self.search_var,
             width=40
+        )
+        self.search_entry.pack(side="left", padx=5)
+        self.search_entry.bind("<Control-a>", self.select_all)
+        self.search_entry.bind("<Control-A>", self.select_all)
+
+        ttk.Label(search_frame, text="Storage:").pack(side="left", padx=(10, 0))
+        storage_options = ["All"] + [e.value for e in StorageEnum]
+        self.storage_filter_var = tk.StringVar(value="All")
+        self.storage_filter_var.trace_add("write", lambda *_: self.on_search())
+        ttk.Combobox(
+            search_frame,
+            textvariable=self.storage_filter_var,
+            values=storage_options,
+            state="readonly",
+            width=12
+        ).pack(side="left", padx=5)
+
+        ttk.Label(search_frame, text="Floor:").pack(side="left", padx=(10, 0))
+        self.floor_filter_var = tk.StringVar()
+        self.floor_filter_var.trace_add("write", lambda *_: self.on_search())
+        ttk.Spinbox(
+            search_frame,
+            from_=1,
+            to=10,
+            textvariable=self.floor_filter_var,
+            width=4
+        ).pack(side="left", padx=5)
+
+        ttk.Label(search_frame, text="Row:").pack(side="left", padx=(10, 0))
+        self.row_filter_var = tk.StringVar()
+        self.row_filter_var.trace_add("write", lambda *_: self.on_search())
+        ttk.Spinbox(
+            search_frame,
+            from_=1,
+            to=20,
+            textvariable=self.row_filter_var,
+            width=4
         ).pack(side="left", padx=5)
 
         ttk.Button(
             search_frame,
             text="Refresh",
-            command=self.load_books
+            command=self.on_search
         ).pack(side="left")
 
         ttk.Button(
@@ -192,6 +229,25 @@ class MainWindow:
 
         text = normalize_text(self.search_var.get())
         books = self.repository.search(text)
+
+        storage_filter = self.storage_filter_var.get()
+        floor_filter = self.floor_filter_var.get().strip()
+        row_filter = self.row_filter_var.get().strip()
+
+        if storage_filter and storage_filter != "All":
+            books = books[books["Storage"] == storage_filter]
+
+        if floor_filter:
+            try:
+                books = books[books["Floor"] == int(floor_filter)]
+            except ValueError:
+                pass
+
+        if row_filter:
+            try:
+                books = books[books["Row"] == int(row_filter)]
+            except ValueError:
+                pass
 
         if self.sort_column is not None and self.sort_column in books.columns:
             books = books.sort_values(
