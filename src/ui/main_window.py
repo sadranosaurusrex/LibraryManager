@@ -13,9 +13,9 @@ class StatusEnum(str, Enum):
 
 
 class StorageEnum(str, Enum):
-    CLOSET_MAIN = "قفسه اصلی"
     SHELF_A = "قفسه A"
     SHELF_B = "قفسه B"
+    SHELF_C = "قفسه C"
 
 import re
 
