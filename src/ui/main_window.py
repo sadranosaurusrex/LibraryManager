@@ -45,6 +45,10 @@ class MainWindow:
         self.root.title("Library Manager")
         self.root.geometry("1200x700")
 
+        # sorting state
+        self.sort_column = None
+        self.sort_reverse = False
+
         self.create_widgets()
         self.load_books()
 
@@ -99,7 +103,8 @@ class MainWindow:
         self.tree = ttk.Treeview(table_frame, columns=columns, show="headings")
 
         for col in columns:
-            self.tree.heading(col, text=col)
+            # attach a click handler to each heading to sort by that column
+            self.tree.heading(col, text=col, command=lambda _col=col: self.sort_by_column(_col))
 
         self.tree.column("ID", width=60)
         self.tree.column("BookName", width=300)
@@ -136,12 +141,39 @@ class MainWindow:
                 return None
         return None
 
+    def sort_by_column(self, column: str):
+        """Toggle sorting by `column` and reload the table."""
+        if self.sort_column == column:
+            # toggle direction
+            self.sort_reverse = not self.sort_reverse
+        else:
+            self.sort_column = column
+            self.sort_reverse = False
+
+        # update heading labels to show an arrow for current sort
+        columns = ("ID", "BookName", "Author", "Genre", "Storage", "Floor", "Row", "Status")
+        for col in columns:
+            arrow = ""
+            if col == self.sort_column:
+                arrow = " ▼" if self.sort_reverse else " ▲"
+            # re-attach command when updating text
+            self.tree.heading(col, text=f"{col}{arrow}", command=lambda _col=col: self.sort_by_column(_col))
+
+        self.load_books()
+
     # ---------------- DATA ----------------
     def load_books(self):
 
         self.tree.delete(*self.tree.get_children())
 
         books = self.repository.get_all_books()
+
+        if self.sort_column is not None and self.sort_column in books.columns:
+            books = books.sort_values(
+                by=self.sort_column,
+                ascending=not self.sort_reverse,
+                na_position="last"
+            )
 
         for _, row in books.iterrows():
             self.tree.insert("", "end", values=(
@@ -160,6 +192,13 @@ class MainWindow:
 
         text = normalize_text(self.search_var.get())
         books = self.repository.search(text)
+
+        if self.sort_column is not None and self.sort_column in books.columns:
+            books = books.sort_values(
+                by=self.sort_column,
+                ascending=not self.sort_reverse,
+                na_position="last"
+            )
 
         self.tree.delete(*self.tree.get_children())
 
