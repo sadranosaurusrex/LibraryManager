@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>کتاب‌خانهٔ من — استودیو مدیریت کتابخانه</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- TOP HEADER -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="24" height="24" fill="none">
+            <rect x="4" y="5" width="7" height="22" rx="2" fill="currentColor" opacity="0.9"/>
+            <rect x="13" y="3" width="7" height="24" rx="2" fill="currentColor" opacity="0.65"/>
+            <path d="M22 6.5L27.5 5.5L30 26L24.5 27L22 6.5Z" fill="currentColor" opacity="0.45"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <h1 id="app-title">کتاب‌خانهٔ من</h1>
+            <span id="header-total-badge" class="pill pill-accent">۰</span>
+            <span id="header-date-badge" class="pill pill-subtle"></span>
+          </div>
+          <p id="app-subtitle" class="brand-subtitle"></p>
+        </div>
+      </div>
+
+      <nav class="main-nav" aria-label="Primary">
+        <button class="nav-tab active" data-tab="library" type="button">
+          <span class="nav-icon">📚</span>
+          <span data-i18n="nav_library">کتابخانه</span>
+        </button>
+        <button class="nav-tab" data-tab="shelf-map" type="button">
+          <span class="nav-icon">🗄️</span>
+          <span data-i18n="nav_shelf_map">نقشهٔ قفسه‌ها</span>
+        </button>
+        <button class="nav-tab" data-tab="analytics" type="button">
+          <span class="nav-icon">📊</span>
+          <span data-i18n="nav_analytics">آمار و تحلیل</span>
+        </button>
+        <button class="nav-tab" data-tab="hygiene" type="button">
+          <span class="nav-icon">🧹</span>
+          <span data-i18n="nav_hygiene">سلامت داده‌ها</span>
+          <span id="hygiene-nav-badge" class="nav-badge hidden">0</span>
+        </button>
+      </nav>
+
+      <div class="topbar-actions">
+        <button id="btn-lang-toggle" class="btn btn-ghost btn-sm" type="button" title="تغییر زبان / Language">
+          🌐 <span id="lang-switch-label">English</span>
+        </button>
+        <button id="btn-theme-toggle" class="btn btn-ghost btn-sm" type="button">
+          <span id="theme-icon">🌙</span>
+          <span id="theme-label" data-i18n="btn_theme_dark">حالت شب</span>
+        </button>
+        <button id="btn-backups" class="btn btn-ghost btn-sm" type="button">
+          🛡️ <span data-i18n="btn_backups">پشتیبان‌ها</span>
+        </button>
+        <div class="export-group">
+          <button id="btn-export-csv" class="btn btn-ghost btn-sm" type="button" data-i18n="btn_export_csv">خروجی CSV اکسل</button>
+          <button id="btn-export-xlsx" class="btn btn-ghost btn-sm" type="button" data-i18n="btn_export_xlsx">دانلود فایل اکسل</button>
+        </div>
+        <button id="btn-add-book" class="btn btn-primary" type="button">
+          <span>＋</span>
+          <span data-i18n="btn_add_book">افزودن کتاب</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- TAB 1: LIBRARY -->
+      <section id="tab-library" class="tab-panel active">
+        <div class="toolbar-card">
+          <div class="search-row">
+            <div class="search-input-wrap">
+              <span class="search-icon" aria-hidden="true">🔍</span>
+              <input
+                id="search-input"
+                type="search"
+                autocomplete="off"
+                placeholder="جستجو بر اساس نام کتاب، نویسنده، موضوع، قفسه یا شناسه..."
+              />
+              <button id="btn-clear-search" class="clear-search-btn hidden" type="button" aria-label="Clear">×</button>
+            </div>
+
+            <div class="view-switcher" role="group" aria-label="View mode">
+              <button id="btn-view-table" class="view-btn active" type="button" data-view="table">
+                ☰ <span data-i18n="view_table">جدول</span>
+              </button>
+              <button id="btn-view-cards" class="view-btn" type="button" data-view="cards">
+                ▦ <span data-i18n="view_cards">کارت و جلد</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="filters-row">
+            <div class="filter-field">
+              <label for="filter-storage" data-i18n="filter_storage">محل نگهداری</label>
+              <select id="filter-storage"></select>
+            </div>
+            <div class="filter-field filter-narrow">
+              <label for="filter-floor" data-i18n="filter_floor">طبقه</label>
+              <select id="filter-floor"></select>
+            </div>
+            <div class="filter-field filter-narrow">
+              <label for="filter-row" data-i18n="filter_row">ردیف</label>
+              <select id="filter-row"></select>
+            </div>
+            <div class="filter-field">
+              <label for="filter-genre" data-i18n="filter_genre">موضوع</label>
+              <select id="filter-genre"></select>
+            </div>
+            <div class="filter-field">
+              <label for="filter-status" data-i18n="filter_status">وضعیت</label>
+              <select id="filter-status"></select>
+            </div>
+            <div class="filter-field">
+              <label for="filter-rating" data-i18n="filter_rating">امتیاز</label>
+              <select id="filter-rating"></select>
+            </div>
+            <div class="filter-actions">
+              <button id="btn-reset-filters" class="btn btn-ghost btn-sm" type="button" data-i18n="filter_reset">پاک کردن فیلترها</button>
+            </div>
+          </div>
+
+          <div class="results-meta-row">
+            <div id="results-summary" class="results-summary"></div>
+            <div class="pagination-controls">
+              <label for="per-page-select" data-i18n="per_page">تعداد در صفحه</label>
+              <select id="per-page-select" class="compact-select">
+                <option value="25">۲۵</option>
+                <option value="50" selected>۵۰</option>
+                <option value="100">۱۰۰</option>
+                <option value="all">همه</option>
+              </select>
+              <button id="btn-prev-page" class="btn btn-ghost btn-sm" type="button" data-i18n="page_prev">قبلی</button>
+              <span id="page-indicator" class="page-indicator"></span>
+              <button id="btn-next-page" class="btn btn-ghost btn-sm" type="button" data-i18n="page_next">بعدی</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLE VIEW -->
+        <div id="table-view-container" class="table-card">
+          <div class="table-scroll">
+            <table class="books-table">
+              <thead>
+                <tr>
+                  <th class="sortable col-id" data-sort="id"><span data-i18n="col_id">شناسه</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-title" data-sort="book_name"><span data-i18n="col_book_name">نام کتاب</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-author" data-sort="author"><span data-i18n="col_author">نویسنده</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-genre" data-sort="genre"><span data-i18n="col_genre">موضوع / ژانر</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-loc" data-sort="storage"><span data-i18n="col_location">جایگاه فیزیکی</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-status" data-sort="status"><span data-i18n="col_status">وضعیت</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-rating" data-sort="rating"><span data-i18n="col_rating">امتیاز</span> <span class="sort-arrow"></span></th>
+                  <th class="sortable col-date" data-sort="date_added"><span data-i18n="col_date_added">تاریخ ثبت</span> <span class="sort-arrow"></span></th>
+                  <th class="col-actions"><span data-i18n="col_actions">عملیات</span></th>
+                </tr>
+              </thead>
+              <tbody id="books-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CARDS VIEW -->
+        <div id="cards-view-container" class="cards-grid hidden"></div>
+
+        <!-- EMPTY STATE -->
+        <div id="library-empty-state" class="empty-state hidden">
+          <div class="empty-icon">📖</div>
+          <h3 data-i18n="empty_title">کتابی با این مشخصات پیدا نشد</h3>
+          <p data-i18n="empty_desc">عبارت جستجو یا فیلترهای فعال را تغییر دهید.</p>
+          <button id="btn-empty-reset" class="btn btn-secondary" type="button" data-i18n="filter_reset">پاک کردن فیلترها</button>
+        </div>
+      </section>
+
+      <!-- TAB 2: PHYSICAL SHELF MAP -->
+      <section id="tab-shelf-map" class="tab-panel">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="shelf_map_title">نقشهٔ فیزیکی کمدها و قفسه‌ها</h2>
+            <p class="section-subtitle" data-i18n="shelf_map_subtitle"></p>
+          </div>
+        </div>
+        <div class="shelf-workspace">
+          <div id="shelf-map-grid" class="shelf-map-grid"></div>
+          <aside id="shelf-slot-inspector" class="shelf-inspector-card hidden">
+            <div class="shelf-inspector-head">
+              <div>
+                <h3 id="shelf-slot-title"></h3>
+                <p id="shelf-slot-count" class="section-subtitle"></p>
+              </div>
+              <button id="btn-shelf-add-here" class="btn btn-primary btn-sm" type="button">
+                ＋ <span data-i18n="shelf_add_here">ثبت کتاب در این جایگاه</span>
+              </button>
+            </div>
+            <div id="shelf-slot-books" class="shelf-slot-books"></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- TAB 3: ANALYTICS -->
+      <section id="tab-analytics" class="tab-panel">
+        <div id="kpi-grid" class="kpi-grid"></div>
+        <div class="charts-grid">
+          <article class="chart-card">
+            <h3 data-i18n="chart_status">توزیع وضعیت مطالعه</h3>
+            <div id="chart-status-container" class="chart-body"></div>
+          </article>
+          <article class="chart-card">
+            <h3 data-i18n="chart_storage">توزیع کتاب‌ها در کمدها و قفسه‌ها</h3>
+            <div id="chart-storage-container" class="chart-body"></div>
+          </article>
+          <article class="chart-card">
+            <h3 data-i18n="chart_genres">پرتکرارترین موضوعات</h3>
+            <div id="chart-genres-container" class="chart-body"></div>
+          </article>
+          <article class="chart-card">
+            <h3 data-i18n="chart_ratings">پراکندگی امتیازها</h3>
+            <div id="chart-ratings-container" class="chart-body"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- TAB 4: DATA HYGIENE -->
+      <section id="tab-hygiene" class="tab-panel">
+        <div class="section-header hygiene-header">
+          <div>
+            <h2 data-i18n="hygiene_title">مرکز سلامت و یکپارچه‌سازی داده‌های اکسل</h2>
+            <p class="section-subtitle" data-i18n="hygiene_subtitle"></p>
+          </div>
+          <button id="btn-hygiene-fix" class="btn btn-primary" type="button">
+            ✨ <span data-i18n="hygiene_run_fix">یکپارچه‌سازی خودکار (با پشتیبان‌گیری)</span>
+          </button>
+        </div>
+        <div id="hygiene-summary-grid" class="kpi-grid"></div>
+        <div id="hygiene-content" class="hygiene-content"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- SLIDE-OVER BOOK INSPECTOR DRAWER -->
+  <div id="drawer-backdrop" class="backdrop hidden"></div>
+  <aside id="book-drawer" class="book-drawer hidden" aria-hidden="true">
+    <div class="drawer-header">
+      <span id="drawer-book-id" class="pill pill-accent"></span>
+      <button id="btn-close-drawer" class="icon-close-btn" type="button" aria-label="Close">×</button>
+    </div>
+    <div id="drawer-body" class="drawer-body"></div>
+  </aside>
+
+  <!-- ADD / EDIT BOOK MODAL -->
+  <div id="book-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="book-modal-title">
+      <div class="modal-header">
+        <h2 id="book-modal-title">افزودن کتاب جدید</h2>
+        <button id="btn-close-book-modal" class="icon-close-btn" type="button" aria-label="Close">×</button>
+      </div>
+      <form id="book-form" class="modal-body" novalidate>
+        <input type="hidden" id="form-book-id" />
+        <div id="form-error-banner" class="form-error-banner hidden"></div>
+
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label for="form-book-name" data-i18n="field_book_name">نام کتاب *</label>
+            <input id="form-book-name" type="text" required />
+          </div>
+
+          <div class="form-group">
+            <label for="form-author" data-i18n="field_author">نام نویسنده / مترجم</label>
+            <input id="form-author" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="form-genre" data-i18n="field_genre">موضوع / ژانر</label>
+            <input id="form-genre" type="text" list="genre-datalist" />
+            <datalist id="genre-datalist"></datalist>
+          </div>
+
+          <div class="form-group">
+            <label for="form-storage" data-i18n="field_storage">کمد یا قفسه *</label>
+            <input id="form-storage" type="text" list="storage-datalist" required />
+            <datalist id="storage-datalist"></datalist>
+          </div>
+
+          <div class="form-group form-inline-pair">
+            <div>
+              <label for="form-floor" data-i18n="field_floor">شماره طبقه</label>
+              <input id="form-floor" type="number" min="1" max="50" />
+            </div>
+            <div>
+              <label for="form-row" data-i18n="field_row">شماره ردیف</label>
+              <input id="form-row" type="number" min="1" max="100" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="form-status" data-i18n="field_status">وضعیت مطالعه</label>
+            <select id="form-status"></select>
+          </div>
+
+          <div class="form-group">
+            <label for="form-rating" data-i18n="field_rating">امتیاز (۰ تا ۵)</label>
+            <input id="form-rating" type="number" min="0" max="5" step="0.5" />
+          </div>
+
+          <div class="form-group">
+            <label for="form-date-added" data-i18n="field_date_added">تاریخ افزودن</label>
+            <input id="form-date-added" type="text" placeholder="1405/08/21 یا 2026-11-12" />
+          </div>
+
+          <div class="form-group">
+            <label for="form-date-finished" data-i18n="field_date_finished">تاریخ پایان مطالعه</label>
+            <input id="form-date-finished" type="text" placeholder="1405/08/21 یا 2026-11-12" />
+          </div>
+
+          <div class="form-group span-2">
+            <label for="form-description" data-i18n="field_description">توضیحات / معرفی کتاب</label>
+            <textarea id="form-description" rows="3"></textarea>
+          </div>
+
+          <div class="form-group span-2">
+            <label for="form-notes" data-i18n="field_notes">یادداشت‌های شخصی</label>
+            <textarea id="form-notes" rows="2"></textarea>
+          </div>
+
+          <div class="form-group span-2">
+            <label data-i18n="field_cover">تصویر جلد کتاب</label>
+            <div class="cover-upload-row">
+              <div id="form-cover-preview" class="cover-mini-preview"></div>
+              <div class="cover-upload-controls">
+                <input id="form-cover-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
+                <button id="btn-choose-cover" class="btn btn-secondary btn-sm" type="button" data-i18n="btn_upload_cover">انتخاب تصویر جلد</button>
+                <button id="btn-clear-cover" class="btn btn-ghost btn-sm" type="button" data-i18n="btn_clear_cover">حذف جلد</button>
+                <span id="form-cover-name" class="cover-filename"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btn-cancel-book-modal" class="btn btn-ghost" type="button" data-i18n="btn_cancel">انصراف</button>
+          <button id="btn-submit-book-modal" class="btn btn-primary" type="submit" data-i18n="btn_save">ذخیره کتاب</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div id="confirm-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal-dialog modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 data-i18n="confirm_delete_title">تأیید حذف کتاب</h2>
+        <button id="btn-close-confirm-modal" class="icon-close-btn" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-delete-book-label" class="confirm-book-name"></p>
+        <p class="section-subtitle" data-i18n="confirm_delete_msg"></p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-cancel-delete" class="btn btn-ghost" type="button" data-i18n="btn_cancel">انصراف</button>
+        <button id="btn-confirm-delete" class="btn btn-danger" type="button" data-i18n="btn_delete">حذف کتاب</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUPS MODAL -->
+  <div id="backups-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal-dialog" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 data-i18n="backups_title">مدیریت نسخه‌های پشتیبان خودکار</h2>
+        <button id="btn-close-backups-modal" class="icon-close-btn" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="backups-toolbar">
+          <p class="section-subtitle" data-i18n="backups_subtitle"></p>
+          <button id="btn-create-backup-now" class="btn btn-primary btn-sm" type="button" data-i18n="btn_create_backup">گرفتن پشتیبان جدید</button>
+        </div>
+        <div id="backups-list" class="backups-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="/static/js/app.js"></script>
+</body>
+</html>
